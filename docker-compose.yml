@@ -1,9 +1,39 @@
-version: '2'
+version: "3.7"
 services:
-  php:
-    image: yiisoftware/yii2-php:7.4-apache
+  home.user-management-service.server:
+    image: nginx:alpine
+    container_name: home.user-management-service.server
+    working_dir: /app
     volumes:
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      - ./:/app:delegated
-    ports:
-      - '8000:80'
+      - ./:/app
+      - ./.dev/nginx/nginx.conf:/etc/nginx/nginx.conf
+    environment:
+      - VIRTUAL_HOST=user-management-service.loc
+    networks:
+      - default
+      - reverse-proxy
+
+  home.user-management-service.fpm:
+    image: ruslandev89/php74-fpm-bitrix
+    container_name: home.user-management-service.fpm
+    working_dir: /app
+    extra_hosts:
+      host.docker.internal: host-gateway
+    volumes:
+      - ./:/app
+      - ./.dev/php/php.ini:/etc/php/7.4/fpm/php.ini
+      - ./.dev/php/php.ini:/etc/php/7.4/cli/php.ini
+    networks:
+      - default
+      - mysql
+      - memcached
+
+networks:
+  default:
+    name: home.user-management-service
+  mysql:
+    external: true
+  memcached:
+    external: true
+  reverse-proxy:
+    external: true
