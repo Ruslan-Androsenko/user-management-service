@@ -62,11 +62,10 @@ $config = [
                 'collapseSlashes' => true,
             ],
             'rules' => [
-                [
-                    'class' => 'yii\rest\UrlRule',
-                    'controller' => 'v1/user',
-                    'pluralize' => false,
-                ],
+                'GET <module:v1>/<controller:user>/<id:\d+>' => '<module>/<controller>/view',
+                'POST <module:v1>/<controller:user>' => '<module>/<controller>/create',
+                'DELETE <module:v1>/<controller:user>/<id:\d+>' => '<module>/<controller>/delete',
+                'PUT <module:v1>/<controller:user>/<id:\d+>' => '<module>/<controller>/update',
             ],
         ],
     ],
