@@ -62,13 +62,11 @@ $config = [
                 'collapseSlashes' => true,
             ],
             'rules' => [
-                '/' => 'site/index',
-                'about' => 'site/about',
-                'contact' => 'site/contact',
-                'login' => 'site/login',
-                'logout' => 'site/logout',
-
-                'GET <module:v1>/<controller:\w+>/<action:\w+>' => '<module>/<controller>/<action>',
+                [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'v1/user',
+                    'pluralize' => false,
+                ],
             ],
         ],
     ],
