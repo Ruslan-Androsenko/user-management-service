@@ -28,8 +28,8 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
-            'enableAutoLogin' => true,
+            'identityClass' => 'app\modules\v1\models\User',
+            'enableSession' => false,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -66,6 +66,7 @@ $config = [
                 'POST <module:v1>/<controller:user>' => '<module>/<controller>/create',
                 'DELETE <module:v1>/<controller:user>/<id:\d+>' => '<module>/<controller>/delete',
                 'PUT <module:v1>/<controller:user>/<id:\d+>' => '<module>/<controller>/update',
+                'GET <module:v1>/<controller:user>/<action:login>' => '<module>/<controller>/<action>',
             ],
         ],
     ],

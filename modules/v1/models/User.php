@@ -4,6 +4,7 @@ namespace app\modules\v1\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 use yii\behaviors\TimestampBehavior;
 
 
@@ -21,7 +22,7 @@ use yii\behaviors\TimestampBehavior;
  * @property int $updated_at
  * @property string|null $verification_token
  */
-class User extends ActiveRecord
+class User extends ActiveRecord implements IdentityInterface
 {
     /** Минимальноя длинна пароля */
     const MIN_PASSWORD_LENGTH = 6;
@@ -106,5 +107,70 @@ class User extends ActiveRecord
         }
 
         return $errors;
+    }
+
+    /**
+     * Генерация нового токена доступа
+     */
+    private function generateAccessToken()
+    {
+        $this->auth_key = Yii::$app->security->generateRandomString();
+        $this->save(false);
+    }
+
+    /**
+     * Finds an identity by the given token.
+     *
+     * @param string $token the token to be looked for
+     * @return IdentityInterface|null the identity object that matches the given token.
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return static::findOne(['auth_key' => $token]);
+    }
+
+    /**
+     * Finds an identity by the given ID.
+     *
+     * @param string|integer $id the ID to be looked for
+     * @return IdentityInterface|null the identity object that matches the given ID.
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne($id);
+    }
+
+    /**
+     * @return int|string current user ID
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return string current user auth key
+     */
+    public function getAuthKey()
+    {
+        if (empty($this->auth_key)) {
+            $this->generateAccessToken();
+        }
+
+        return $this->auth_key;
+    }
+
+    /**
+     * @param string $authKey
+     * @return boolean if auth key is valid for current user
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
+    }
+
+    public function isAutenticate($password)
+    {
+        return Yii::$app->getSecurity()->validatePassword($password, $this->password_hash);
     }
 }
