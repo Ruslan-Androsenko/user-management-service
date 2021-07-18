@@ -51,7 +51,7 @@ class UserController extends ActiveController
         $password = Yii::$app->request->get('password') ?? '';
 
         if (!empty($username) && !empty($password)) {
-            $user = User::findOne(['username' => $username]);
+            $user = User::findOne(['username' => $username, 'status' => 10]);
 
             if (!$user) {
                 Yii::$app->response->setStatusCode(404);
